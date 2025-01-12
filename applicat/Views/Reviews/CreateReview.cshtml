@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Оставить отзыв";
+}
+
+<h2>Оставить отзыв на @ViewBag.Game.Title</h2>
+
+<form asp-action="CreateReview" method="post">
+    <input type="hidden" name="gameId" value="@ViewBag.Game.Id" />
+
+    <div class="form-group">
+        <label for="content">Ваш отзыв</label>
+        <textarea class="form-control" name="content" required></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="rating">Оценка</label>
+        <select class="form-control" name="rating">
+            <option value="1">★☆☆☆☆</option>
+            <option value="2">★★☆☆☆</option>
+            <option value="3">★★★☆☆</option>
+            <option value="4">★★★★☆</option>
+            <option value="5">★★★★★</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Оставить отзыв</button>
+</form>
+
+<a asp-controller="Games" asp-action="Index" class="btn btn-secondary mt-3">Назад</a>

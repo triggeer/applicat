@@ -1,0 +1,80 @@
+﻿@{
+    ViewData["Title"] = "Список игр";
+}
+
+@model IEnumerable<applicat.Models.UserGameViewModel>
+
+<h2>Ваш список игр</h2>
+
+<!-- Отображение сообщений об успехе или ошибке -->
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Жанр</th>
+            <th>Описание</th>
+            <th>Статус</th>
+            <th>Действия</th>
+            <th>Отзывы</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var game in Model)
+        {
+            <tr>
+                <td>@game.Title</td>
+                <td>@game.Genre</td>
+                <td>@game.Description</td>
+                <td>
+                    <form asp-action="UpdateStatus" method="post">
+                        <input type="hidden" name="userGameId" value="@game.UserGameId" />
+                        <select name="status" class="form-control" onchange="this.form.submit()">
+                            <option value="Запланировано" selected="@(game.Status == "Запланировано" ? "selected" : null)">Запланировано</option>
+                            <option value="Прохожу" selected="@(game.Status == "Прохожу" ? "selected" : null)">Прохожу</option>
+                            <option value="Пройдено" selected="@(game.Status == "Пройдено" ? "selected" : null)">Пройдено</option>
+                        </select>
+                    </form>
+                </td>
+
+                <td>
+                    <form asp-action="Delete" method="post" style="display:inline;">
+                        <input type="hidden" name="id" value="@game.UserGameId" />
+                        <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                    </form>
+                </td>
+                <td>
+                    <a asp-controller="Reviews" asp-action="GameReviews" asp-route-gameId="@game.GameId" class="btn btn-info btn-sm">Отзывы</a>
+                    <a asp-controller="Reviews" asp-action="CreateReview" asp-route-gameId="@game.GameId" class="btn btn-success btn-sm">Оставить отзыв</a>
+                </td>
+
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (ViewBag.AllGames != null && ViewBag.AllGames.Count > 0)
+{
+    <h3>Добавить существующую игру в список</h3>
+    <form asp-action="AddGameToUser" method="post">
+        <label for="gameId">Выберите игру:</label>
+        <select name="gameId" id="gameId" class="form-control">
+            @foreach (var game in ViewBag.AllGames as List<applicat.Models.Game>)
+            {
+                <option value="@game.Id">@game.Title</option>
+            }
+        </select>
+        <button type="submit" class="btn btn-success mt-2">Добавить в список</button>
+    </form>
+}
+

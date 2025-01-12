@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Главная";
+}
+
+<h2>Добро пожаловать в GameList</h2>
+
+@if (Context.Session.GetString("UserRole") == "Admin")
+{
+    <h3>Панель управления</h3>
+    <a asp-controller="Admin" asp-action="ManageGames" class="btn btn-primary">Управление играми</a>
+    <a asp-controller="Admin" asp-action="ManageUsers" class="btn btn-secondary">Управление пользователями</a>
+}
+
+@if (Context.Session.GetString("UserRole") == "User")
+{
+    <h3>Панель управления</h3>
+    <a asp-controller="Games" asp-action="Index" class="btn btn-primary" >Ваш список игр</a>
+}
+
+@if (Context.Session.GetString("UserRole") == null) 
+{
+    <a asp-controller="Account" asp-action="Login" class="btn btn-primary">Войти</a>
+    <a asp-controller="Account" asp-action="Register" class="btn btn-primary">Зарегистрироваться</a>
+ }

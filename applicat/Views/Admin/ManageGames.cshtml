@@ -1,0 +1,28 @@
+﻿@model IEnumerable<applicat.Models.Game>
+@{
+    ViewData["Title"] = "Управление играми";
+}
+
+<h2>Управление играми</h2>
+
+<a asp-action="Create" class="btn btn-primary">Добавить игру</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Жанр</th>
+            <th>Описание</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var game in Model)
+        {
+            <tr>
+                <td>@game.Title</td>
+                <td>@game.Genre</td>
+                <td>@game.Description</td>
+            </tr>
+        }
+    </tbody>
+</table>

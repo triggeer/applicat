@@ -1,0 +1,23 @@
+﻿@model applicat.Models.Game
+
+<h2>Отзывы на @Model.Title</h2>
+
+@if (Model.Reviews.Any())
+{
+    <ul class="list-group">
+        @foreach (var review in Model.Reviews)
+        {
+            <li class="list-group-item">
+                <strong>@review.User.Username</strong> (Оценка: @review.Rating★)
+                <p>@review.Content</p>
+                <small>@review.CreatedAt.ToString("g")</small>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>Пока нет отзывов.</p>
+}
+
+<a asp-controller="Games" asp-action="Index" class="btn btn-secondary mt-3">Назад</a>
