@@ -112,7 +112,6 @@ public class AdminController : Controller
         return RedirectToAction(nameof(ManageUsers));
     }
 
-
     public IActionResult Create()
     {
         // Проверяем роль пользователя
@@ -141,5 +140,71 @@ public class AdminController : Controller
             return RedirectToAction(nameof(ManageGames));
         }
         return View(game);
+    }
+    public async Task<IActionResult> EditGame(int id)
+    {
+        var userRole = HttpContext.Session.GetString("UserRole");
+        if (userRole != "Admin")
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        var game = await _context.Games.FindAsync(id);
+        if (game == null)
+        {
+            return NotFound();
+        }
+
+        return View(game);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditGame(int id, [Bind("Id,Title,Genre,Description")] Game game)
+    {
+        var userRole = HttpContext.Session.GetString("UserRole");
+        if (userRole != "Admin")
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        if (id != game.Id)
+        {
+            return NotFound();
+        }
+
+        if (ModelState.IsValid)
+        {
+            _context.Update(game);
+            await _context.SaveChangesAsync();
+            TempData["Success"] = "Игра успешно обновлена.";
+            return RedirectToAction(nameof(ManageGames));
+        }
+
+        return View(game);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteGame(int id)
+    {
+        var userRole = HttpContext.Session.GetString("UserRole");
+        if (userRole != "Admin")
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        var game = await _context.Games.FindAsync(id);
+        if (game == null)
+        {
+            TempData["Error"] = "Ошибка: игра не найдена.";
+            return RedirectToAction(nameof(ManageGames));
+        }
+
+        _context.Games.Remove(game);
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = "Игра успешно удалена.";
+        return RedirectToAction(nameof(ManageGames));
     }
 }

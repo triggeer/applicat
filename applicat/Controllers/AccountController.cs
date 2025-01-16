@@ -47,24 +47,32 @@ public class AccountController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Register(string username, string email, string password)
+    public IActionResult Register(string username, string email, string password, string confirmPassword)
     {
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
         {
             ModelState.AddModelError("", "Все поля обязательны.");
             return View();
         }
 
-        if (_context.Users.Any(u => u.Username == username))
+        // Проверяем, совпадают ли пароли
+        if (password != confirmPassword)
         {
-            ModelState.AddModelError("", "Имя пользователя уже существует.");
+            ModelState.AddModelError("", "Пароли не совпадают.");
             return View();
         }
 
-        // Проверяем, есть ли уже пользователь с таким email
+        // Проверяем, существует ли имя пользователя
+        if (_context.Users.Any(u => u.Username == username))
+        {
+            ModelState.AddModelError("", "Имя пользователя уже занято.");
+            return View();
+        }
+
+        // Проверяем, существует ли email
         if (_context.Users.Any(u => u.Email == email))
         {
-            ModelState.AddModelError("", "Пользователь с таким Email уже существует.");
+            ModelState.AddModelError("", "Email уже используется.");
             return View();
         }
 
@@ -80,7 +88,6 @@ public class AccountController : Controller
         _context.Users.Add(user);
         _context.SaveChanges();
 
-        // Автоматический вход после регистрации
         HttpContext.Session.SetString("UserId", user.Id.ToString());
         HttpContext.Session.SetString("UserRole", user.Role);
 

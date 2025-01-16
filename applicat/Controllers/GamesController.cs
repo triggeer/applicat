@@ -1,9 +1,13 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using applicat.Data;
 using applicat.Models;
+using System.Security.Claims;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace applicat.Controllers
 {
@@ -94,6 +98,12 @@ namespace applicat.Controllers
             {
                 return RedirectToAction("Login", "Account");
             }
+            var existingGame = await _context.Games.FirstOrDefaultAsync(g => g.Title == game.Title);
+            if (existingGame != null)
+            {
+                ModelState.AddModelError("", "Ошибка");
+                return View(game);
+            }
 
             if (ModelState.IsValid)
             {
@@ -101,6 +111,8 @@ namespace applicat.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+
 
             return View(game);
         }
@@ -231,7 +243,7 @@ namespace applicat.Controllers
             }
 
             // Разрешаем только определённые статусы
-            var allowedStatuses = new List<string> { "Запланировано", "Прохожу", "Пройдено" };
+            var allowedStatuses = new List<string> { "Запланировано", "Прохожу", "Пройдено", "Брошено" };
             if (!allowedStatuses.Contains(status))
             {
                 TempData["Error"] = "Недопустимый статус.";
@@ -298,3 +310,5 @@ namespace applicat.Controllers
         }
     }
 }
+
+

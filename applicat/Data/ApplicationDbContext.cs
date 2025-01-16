@@ -15,14 +15,13 @@ namespace applicat.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Связь "Один-ко-Многим": Один Game → много Reviews
+
             modelBuilder.Entity<Review>()
                 .HasOne(r => r.Game)
                 .WithMany(g => g.Reviews)
                 .HasForeignKey(r => r.GameId)
                 .OnDelete(DeleteBehavior.Cascade); // Удаление отзывов при удалении игры
 
-            // Связь "Один-ко-Многим": Один User → много Reviews
             modelBuilder.Entity<Review>()
                 .HasOne(r => r.User)
                 .WithMany()

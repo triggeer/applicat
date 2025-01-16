@@ -26,6 +26,7 @@
             <th>Статус</th>
             <th>Действия</th>
             <th>Отзывы</th>
+            <th> </th>
         </tr>
     </thead>
     <tbody>
@@ -42,6 +43,7 @@
                             <option value="Запланировано" selected="@(game.Status == "Запланировано" ? "selected" : null)">Запланировано</option>
                             <option value="Прохожу" selected="@(game.Status == "Прохожу" ? "selected" : null)">Прохожу</option>
                             <option value="Пройдено" selected="@(game.Status == "Пройдено" ? "selected" : null)">Пройдено</option>
+                            <option value="Брошено" selected="@(game.Status == "Брошено" ? "selected" : null)">Брошено</option>
                         </select>
                     </form>
                 </td>
@@ -54,10 +56,12 @@
                 </td>
                 <td>
                     <a asp-controller="Reviews" asp-action="GameReviews" asp-route-gameId="@game.GameId" class="btn btn-info btn-sm">Отзывы</a>
-                    <a asp-controller="Reviews" asp-action="CreateReview" asp-route-gameId="@game.GameId" class="btn btn-success btn-sm">Оставить отзыв</a>
+                <td>
+                        @if (game.Status == "Прохожу" || game.Status == "Пройдено" || game.Status == "Брошено")
+                        {
+                        <a asp-controller="Reviews" asp-action="CreateReview" asp-route-gameId="@game.GameId" class="btn btn-success btn-sm">Оставить отзыв</a>
+                        }
                 </td>
-
-
             </tr>
         }
     </tbody>
@@ -77,4 +81,3 @@
         <button type="submit" class="btn btn-success mt-2">Добавить в список</button>
     </form>
 }
-
